@@ -486,17 +486,10 @@ class Page1(tk.Frame):
             graficar(puntosEjeH, xn.obtener_datos(), hn.obtener_datos(), gn.obtener_datos(), operacion)
 
         def fft():
-            """
-            Comando asociado al botón "FFT"
-            """
-            # Obtiene datos de GUI
             senales = concatenarSecuenciaX()
             xn = senales[0]
-            # Se realiza la operación
-            gn = obtener_FFT(xn) # ------------------LINEA A CAMBIAR
-
-            operacion = "FFT" # ------------------------LINEA A CAMBIAR
-            # Se configura la GUI
+            gn = obtener_FFT(xn) 
+            operacion = "FFT" 
             xnn = xn.obtener_datos()
             gnn = gn.obtener_datos()
             resx = "x(n)={"
