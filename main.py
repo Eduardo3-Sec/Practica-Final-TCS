@@ -693,7 +693,15 @@ class Page2(tk.Frame):
             gn.empatar(xn)
             obtenerAudioDesdeSenalDiscreta(gn)
             graficarInterpolacionDiezmacion(xn.obtener_datos(), gn.obtener_datos(), operacion)
-           
+        
+        ####### FFT AUDIO #######
+        def fft_audio():
+            T1N = graficarFFT2(obtenerNumpyDesdeAudio().obtener_datos())
+            obtenerAudioDesdeNumpy(T1N)
+            plt.subplot(121)
+            plt.plot(T1N)
+            plt.show()
+        
         tk.Frame.__init__(self, parent)
         #######Titulo de la Pagina Señal de Audio#######
         label1 = tk.Label(self, text="Señal de Audio", font=("Consolas", 16))
@@ -763,14 +771,13 @@ class Page2(tk.Frame):
         entryDiezInter.grid(row=8, column=5, padx=0, pady=5)
         
         btnFFT = tk.Button(self, text="FFT", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=fft_audio)
         btnFFT.grid(row=10, column=1, padx=0, pady=5)
         
         #######Boton de Regreso a Pagina Principal######
         button1 = tk.Button(self, text="Regresar",background="#063970",foreground="white",cursor="hand2",bd=5,
                             command=lambda: controller.show_frame(StartPage))
         button1.grid(row=11, column=2, padx=0, pady=0)
-
 
 app = tkinterApp()
 app.mainloop()
