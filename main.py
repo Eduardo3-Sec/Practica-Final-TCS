@@ -3,6 +3,8 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 from matplotlib import pyplot
 import numpy as np
+from pydub import AudioSegment
+from pydub.playback import play
 #######Imports de Archivos#######
 from senalDiscreta import *
 from operacionSuma import *
@@ -633,6 +635,24 @@ class Page1(tk.Frame):
 
 class Page2(tk.Frame):
     def __init__(self, parent, controller):
+        
+        estadoGrabacion = StringVar()
+        ####### Grabar Audio ######
+        def grabarGUI():
+            estadoGrabacion.set("Grabando...")
+            global senal
+            grabarAudio()
+            senal = obtenerSenalDiscretaDesdeAudio()
+            estadoGrabacion.set("Audio grabado")
+            
+        def reproducirEntrada():
+            song = AudioSegment.from_wav("entrada.wav")
+            play(song)
+
+        def reproducirSalida():
+            song = AudioSegment.from_wav("Salida.wav")
+            play(song)
+            
         tk.Frame.__init__(self, parent)
         #######Titulo de la Pagina Señal de Audio#######
         label1 = tk.Label(self, text="Señal de Audio", font=("Consolas", 16))
@@ -640,18 +660,19 @@ class Page2(tk.Frame):
         #######Comienzo Widgets#######
         
         btnGrabar = tk.Button(self, text="Grabar", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=grabarGUI)
         btnGrabar.grid(row=2,column=1,padx=30,pady=5)
         
-        labelGrabar = tk.Label(self, text="Sin Grabar", font=("Consolas", 12),foreground="red")
+        labelGrabar = tk.Label(self, text="Sin Grabar", font=(
+            "Consolas", 12), foreground="red", textvariable=estadoGrabacion)
         labelGrabar.grid(row=2, column=2, padx=0, pady=5)
                 
         btnEEntrada = tk.Button(self, text="Escuchar Entrada", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=reproducirEntrada)
         btnEEntrada.grid(row=3,column=1,padx=0,pady=5)
         
         btnESalida = tk.Button(self, text="Escuchar Salida", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=reproducirSalida)
         btnESalida.grid(row=3, column=2, padx=0, pady=5)
         
         btnAmpli = tk.Button(self, text="Amplificación/Atenuación", font=(
