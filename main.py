@@ -11,6 +11,8 @@ from operacionAmplificacionAtenuacion import *
 from operacionReflejo import *
 from operacionDesplazamiento import *
 from operacionInterpolacionDiezmacion import *
+from operacionConvolucion import *
+from operacionFFT import *
 #####Decalracion de varibles Globales#####
 
 class tkinterApp(tk.Tk):
@@ -416,7 +418,7 @@ class Page1(tk.Frame):
                 else:
                     resx = resx + str(e)
             resx = resx + "}"
-        
+
             resg = "g(n)={"
             for e in gnn:
                 if e != "":
@@ -432,9 +434,89 @@ class Page1(tk.Frame):
             
         ####### Interpolar #######
         def interpolar():
-            print("HOLA")
-            
-            
+            #Obtiene datos de la GUI
+            seniales = concatenarSecuenciaX()
+            xn = seniales[0]
+            operacion = "Interpolación"
+            if(xn.obtener_indice_inicio() > 0):
+                xn.asignar_indice_inicio(-xn.obtener_indice_inicio())
+            # Se realiza la operación
+            gn = obtenerInterpolacion(xn, int(factorInterpolacionDiezmacion.get()))
+            # Se configura la GUI
+            xnn = xn.obtener_datos()
+            gnn = gn.obtener_datos()
+            resx = "x(n)={"
+            for e in xnn:
+                if e != "":
+                    resx = resx + str(e) + ","
+                else:
+                    resx = resx + str(e)
+            resx = resx + "}"
+
+            resg = "g(n)={"
+            for e in gnn:
+                if e != "":
+                    resg = resg+str(e)+","
+                else:
+                    resg = resg + str(e)
+            resg = resg+"}"
+            resultadoXn.set(resx)
+            resultadoGn.set(resg)
+            # Grafica
+            gn.empatar(xn)
+            graficarSolo2(range(gn.obtener_indice_inicio(), gn.obtener_longitud()+gn.obtener_indice_inicio()), xn.obtener_datos(), gn.obtener_datos(), operacion)
+        def convolusionar():
+            senales = emparejarValores()
+            xn = senales[0]
+            hn = senales[1]
+            gn = convolucionar(xn, hn) # ------------------LINEA A CAMBIAR
+
+            # Se realiza emparejamiento
+            xn.empatar(gn)
+            hn.empatar(gn)
+            emparejarPuntosEjeHConInicio(gn)
+
+            operacion = "Convolución" # ------------------------LINEA A CAMBIAR
+            # Se configura la GUI
+            #configurarPantalla(operacion, obtenerSecuencia("x", xn), obtenerSecuencia("h", hn), obtenerSecuencia("g", gn))
+            resultadoXn.set(obtenerSecuencia("x", xn))
+            resultadoHn.set(obtenerSecuencia("h", hn))
+            resultadoGn.set(obtenerSecuencia("g", gn))
+            # Grafica
+            graficar(puntosEjeH, xn.obtener_datos(), hn.obtener_datos(), gn.obtener_datos(), operacion)
+
+        def fft():
+            """
+            Comando asociado al botón "FFT"
+            """
+            # Obtiene datos de GUI
+            senales = concatenarSecuenciaX()
+            xn = senales[0]
+            # Se realiza la operación
+            gn = obtener_FFT(xn) # ------------------LINEA A CAMBIAR
+
+            operacion = "FFT" # ------------------------LINEA A CAMBIAR
+            # Se configura la GUI
+            xnn = xn.obtener_datos()
+            gnn = gn.obtener_datos()
+            resx = "x(n)={"
+            for e in xnn:
+                if e != "":
+                    resx = resx + str(e) + ","
+                else:
+                    resx = resx + str(e)
+            resx = resx + "}"
+
+            resg = "g(n)={"
+            for e in gnn:
+                if e != "":
+                    resg = resg+str(e)+","
+                else:
+                    resg = resg + str(e)
+            resg = resg+"}"
+            resultadoXn.set(resx)
+            resultadoGn.set(resg)
+                    
         tk.Frame.__init__(self, parent)
         #######LABEL DE TITULO SECUENCIA DE VALORES#######
         label1 = tk.Label(self, text="Secuencia Valores", font=("Consolas", 16))
@@ -530,11 +612,11 @@ class Page1(tk.Frame):
         entryDiezInter.grid(row=8, column=5, padx=0, pady=5)
         
         btnConvo = tk.Button(self, text="Convolución", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=convolusionar)
         btnConvo.grid(row=9, column=1, padx=0, pady=5)
         
         btnFFT = tk.Button(self, text="FFT", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=fft)
         btnFFT.grid(row=10, column=1, padx=0, pady=5)
         #######Pintar Resultados########
         lblResultadoXn = tk.Label(self,text="Resultado",font=("Consolas",10))
