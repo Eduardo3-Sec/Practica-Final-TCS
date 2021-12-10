@@ -10,6 +10,7 @@ from operacionResta import *
 from operacionAmplificacionAtenuacion import *
 from operacionReflejo import *
 from operacionDesplazamiento import *
+from operacionInterpolacionDiezmacion import *
 #####Decalracion de varibles Globales#####
 
 class tkinterApp(tk.Tk):
@@ -86,6 +87,7 @@ class Page1(tk.Frame):
         resultadoGn = StringVar()
         multiplicador = StringVar()
         udsDesplazamiento = IntVar()
+        factorInterpolacionDiezmacion = StringVar()
         global newH # lista para H(n) de longitud estandar
         global newX # lista para H(n) de longitud estandar
         newH = []  # lista para H(n) de longitud estandar
@@ -393,6 +395,44 @@ class Page1(tk.Frame):
             resultadoXn.set(resx)
             resultadoGn.set(resg)
             graficarSolo2(range(gn.obtener_indice_inicio(), gn.obtener_longitud() + gn.obtener_indice_inicio()), xncopia.obtener_datos(), gn.obtener_datos(), operacion)
+        ####### Diezmar #######
+        def diezmar():
+            senales = concatenarSecuenciaX()
+            xn = senales[0]
+            operacion = "Diezmación"
+            if(xn.obtener_indice_inicio() > 0):
+                xn.asignar_indice_inicio(-xn.obtener_indice_inicio())
+            # Se realiza la operación
+            gn = obtenerDiezmacion(xn, int(factorInterpolacionDiezmacion.get()))
+            
+            # Se configura la GUI
+            #configurarPantallaDeUnSoloValor(operacion, xn.obtener_datos(), gn.obtener_datos())
+            xnn = xn.obtener_datos()
+            gnn = gn.obtener_datos()
+            resx = "x(n)={"
+            for e in xnn:
+                if e != "":
+                    resx = resx + str(e) + ","
+                else:
+                    resx = resx + str(e)
+            resx = resx + "}"
+        
+            resg = "g(n)={"
+            for e in gnn:
+                if e != "":
+                    resg = resg+str(e)+","
+                else:
+                    resg = resg + str(e)
+            resg = resg+"}"
+            resultadoXn.set(resx)
+            resultadoGn.set(resg)
+            # Grafica
+            gn.empatar(xn)
+            graficarSolo2(range(gn.obtener_indice_inicio(), gn.obtener_longitud()+gn.obtener_indice_inicio()), xn.obtener_datos(), gn.obtener_datos(), operacion)
+            
+        ####### Interpolar #######
+        def interpolar():
+            print("HOLA")
             
             
         tk.Frame.__init__(self, parent)
@@ -476,17 +516,17 @@ class Page1(tk.Frame):
         entryDespla.grid(row=7, column=3, padx=0, pady=5)
         
         btnDiez = tk.Button(self, text="Diezmación", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=diezmar)
         btnDiez.grid(row=8, column=1, padx=0, pady=5)
         
         btnInterpo = tk.Button(self, text="Interpolación", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=interpolar)
         btnInterpo.grid(row=8, column=2, padx=0, pady=5)
         
         lblFactor = tk.Label(self,text="Factor Diez/Inter : ",font=("Consolas",10))
         lblFactor.grid(row=8,column=3,padx=0,pady=5)
         
-        entryDiezInter = tk.Entry(self, font=("Consolas", 12))
+        entryDiezInter = tk.Entry(self, font=("Consolas", 12),textvariable=factorInterpolacionDiezmacion)
         entryDiezInter.grid(row=8, column=5, padx=0, pady=5)
         
         btnConvo = tk.Button(self, text="Convolución", font=(
