@@ -9,6 +9,7 @@ from operacionSuma import *
 from operacionResta import *
 from operacionAmplificacionAtenuacion import *
 from operacionReflejo import *
+from operacionDesplazamiento import *
 #####Decalracion de varibles Globales#####
 
 class tkinterApp(tk.Tk):
@@ -84,6 +85,7 @@ class Page1(tk.Frame):
         resultadoHn = StringVar()
         resultadoGn = StringVar()
         multiplicador = StringVar()
+        udsDesplazamiento = IntVar()
         global newH # lista para H(n) de longitud estandar
         global newX # lista para H(n) de longitud estandar
         newH = []  # lista para H(n) de longitud estandar
@@ -359,7 +361,39 @@ class Page1(tk.Frame):
             resultadoGn.set(obtenerSecuencia("y", gnY))
             # Grafica
             graficarReflejo(puntosEjeH, gnX.obtener_datos(), gnY.obtener_datos(), operacion)
+        #######Operacion Desplazar #######
+        def desplazar():
+            global newX,newX2,puntosEjeH
+            xn = concatenarSecuenciaX()[0]
+            xncopia = SenalDiscreta(xn.obtener_datos(), xn.obtener_indice_inicio(), xn.es_periodica())
+            gn = obtener_Desplazamiento(xn, udsDesplazamiento.get())
+            operacion = "Desplazar"
+            # Se configura la GUI
+            #configurarPantallaDeUnSoloValor(operacion, xncopia.obtener_datos(), gn.obtener_datos())
+            # Grafica
+            xnn = xncopia.obtener_datos()
+            gnn = gn.obtener_datos()
+            
+            resx = "x(n)={"
+            for e in xnn:
+                if e != "":
+                    resx = resx + str(e) + ","
+                else:
+                    resx = resx + str(e)
+            resx = resx + "}"
 
+            resg = "g(n)={"
+            for e in gnn:
+                if e != "":
+                    resg = resg+str(e)+","
+                else:
+                    resg = resg + str(e)
+            resg = resg+"}"
+
+            resultadoXn.set(resx)
+            resultadoGn.set(resg)
+            graficarSolo2(range(gn.obtener_indice_inicio(), gn.obtener_longitud() + gn.obtener_indice_inicio()), xncopia.obtener_datos(), gn.obtener_datos(), operacion)
+            
             
         tk.Frame.__init__(self, parent)
         #######LABEL DE TITULO SECUENCIA DE VALORES#######
@@ -431,13 +465,14 @@ class Page1(tk.Frame):
         btnReflejo.grid(row=6,column=1,padx=0,pady=5)
         
         btnDespla = tk.Button(self, text="Desplazamiento", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=desplazar)
         btnDespla.grid(row=7,column=1,padx=0,pady=5)
         
         lblDespla = tk.Label(self,text="U a desplazar : ",font=("Consolas",10))
         lblDespla.grid(row=7,column=2,padx=0,pady=5)
         
-        entryDespla = tk.Entry(self, font=("Consolas", 12))
+        entryDespla = tk.Entry(self, font=("Consolas", 12),
+                               textvariable=udsDesplazamiento)
         entryDespla.grid(row=7, column=3, padx=0, pady=5)
         
         btnDiez = tk.Button(self, text="Diezmación", font=(
