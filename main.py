@@ -701,6 +701,13 @@ class Page2(tk.Frame):
             plt.subplot(121)
             plt.plot(T1N)
             plt.show()
+        ####### Reflejo X #######
+        def reflejarEnX():
+            print("Aqui deberia de ir el codigo de Reflejo X pero no funciona bien")
+        ####### Reflejo Y #######
+        def reflejarEnY():
+            print("Aqui deberia de ir el codigo de Reflejo Y pero no funciona bien")
+            
         
         tk.Frame.__init__(self, parent)
         #######Titulo de la Pagina Señal de Audio#######
@@ -736,11 +743,11 @@ class Page2(tk.Frame):
         entryMult.grid(row=5, column=3, padx=0, pady=5)
         
         btnReflejoX = tk.Button(self, text="Reflejo X", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=reflejarEnX)
         btnReflejoX.grid(row=6,column=1,padx=0,pady=5)
         
         btnReflejoY = tk.Button(self, text="Reflejo Y", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=reflejarEnY)
         btnReflejoY.grid(row=6,column=2,padx=0,pady=5)
         
         btnDespla = tk.Button(self, text="Desplazamiento", font=(
