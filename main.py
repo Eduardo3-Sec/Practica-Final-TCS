@@ -8,6 +8,7 @@ from senalDiscreta import *
 from operacionSuma import *
 from operacionResta import *
 from operacionAmplificacionAtenuacion import *
+from operacionReflejo import *
 #####Decalracion de varibles Globales#####
 
 class tkinterApp(tk.Tk):
@@ -95,6 +96,21 @@ class Page1(tk.Frame):
         hL = StringVar()
         hO = StringVar()
         hR = StringVar()
+        #######Graficar Reflejo #######
+        def graficarReflejo(puntosEjeH,ejeX,ejeY,operacion):
+            plt.subplot(311)
+            markerline, stemlines, baseline = plt.stem(puntosEjeH, ejeX, '-.')
+            pyplot.axhline(0, color="black")
+            pyplot.axvline(0, color="black")
+            plt.ylabel('En X')
+            plt.subplot(313)
+            markerline, stemlines, baseline = plt.stem(puntosEjeH, ejeY, '-.')
+            plt.suptitle(operacion+' x(n) en el eje X y Y')
+            plt.setp(baseline)
+            plt.ylabel('En Y')
+            pyplot.axhline(0, color="black")
+            pyplot.axvline(0, color="black")
+            plt.show()
         #######Graficar #######
         def graficar(puntosEjeH,newX,newH,resultado,operacion):
             plt.subplot(311)
@@ -315,7 +331,36 @@ class Page1(tk.Frame):
             resultadoXn.set(resx)
             resultadoGn.set(resg)
             graficarSolo2(puntosEjeH, newX, gn, operacion)
-        
+        #######Reflejo En X y Y #######
+        def reflejoEnXyY():
+            senal = concatenarSecuenciaX()
+            xn = senal[0]
+            
+            senal = SenalDiscreta(xn.obtener_datos(),xn.obtener_indice_inicio(),xn.es_periodica())
+            gnY = obtener_reflejoY(xn)
+            gnY = obtener_reflejoY(xn)
+
+            datosAux = xn.obtener_datos()
+            for i in range(len(datosAux)):
+                datosAux[i] = datosAux[i] * -1
+
+            gnX = SenalDiscreta(datosAux, xn.obtener_indice_inicio(), xn.es_periodica())
+
+            originalData =  senal.obtener_datos()[:]
+            for i in range(len(originalData)):
+                originalData[i]*=-1
+            senal.asignar_datos(originalData)
+
+            operacion = "Reflejar" # ------------------------LINEA A CAMBIAR
+            # Se configura la GU
+            #configurarPantalla(operacion, obtenerSecuencia("f", senal), obtenerSecuencia("x", gnX), obtenerSecuencia("y", gnY))
+            resultadoXn.set(obtenerSecuencia("f", senal))
+            resultadoHn.set(obtenerSecuencia("x", gnX))
+            resultadoGn.set(obtenerSecuencia("y", gnY))
+            # Grafica
+            graficarReflejo(puntosEjeH, gnX.obtener_datos(), gnY.obtener_datos(), operacion)
+
+            
         tk.Frame.__init__(self, parent)
         #######LABEL DE TITULO SECUENCIA DE VALORES#######
         label1 = tk.Label(self, text="Secuencia Valores", font=("Consolas", 16))
@@ -382,7 +427,7 @@ class Page1(tk.Frame):
         entryMult.grid(row=5,column=3,padx=0,pady=5)
         
         btnReflejo = tk.Button(self, text="Reflejo en X y Y", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=reflejoEnXyY)
         btnReflejo.grid(row=6,column=1,padx=0,pady=5)
         
         btnDespla = tk.Button(self, text="Desplazamiento", font=(
