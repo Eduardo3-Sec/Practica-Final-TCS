@@ -637,6 +637,9 @@ class Page2(tk.Frame):
     def __init__(self, parent, controller):
         
         estadoGrabacion = StringVar()
+        multiplicador = StringVar()
+        udsDesplazamiento = IntVar()
+        factorInterpolacionDiezmacion = StringVar()
         ####### Grabar Audio ######
         def grabarGUI():
             estadoGrabacion.set("Grabando...")
@@ -652,7 +655,45 @@ class Page2(tk.Frame):
         def reproducirSalida():
             song = AudioSegment.from_wav("Salida.wav")
             play(song)
-            
+        ####### Amplificar y Atenuar #######
+        def amplificarAtenuarAudio():
+                # Se realiza la operación
+            gn = obtenerAmplificacionAtenuacion(senal.obtener_datos().copy(), float(multiplicador.get()))
+
+            if float(multiplicador.get())>1:
+                operacion = "Amplificacion"
+            else:
+                operacion = "Atenuacion"
+            obtenerAudioDesdeSenalDiscreta(SenalDiscreta(gn, 0, False))
+            # Grafica
+            graficarInterpolacionDiezmacion(senal.obtener_datos(), gn, operacion)
+        ####### Desplazar Audio #######
+        def desplazarAudio():
+            DesplazarCompletoAudio(udsDesplazamiento.get()*int(44100/2))
+        ###### Interpolar y Diezmar Audio #######
+        def diezmarAudio():
+            xn = SenalDiscreta(senal.obtener_datos().copy(), 0, False)
+            operacion = "Diezmación"
+            factor = int(factorInterpolacionDiezmacion.get())
+            # Se realiza la operación
+            gn = obtenerDiezmacion(xn, factor)
+            # Grafica
+            gn.asignar_indice_inicio(0)
+            gn.empatar(xn)
+            obtenerAudioDesdeSenalDiscreta(gn)
+            graficarInterpolacionDiezmacion(xn.obtener_datos(), gn.obtener_datos(), operacion)
+
+        def interpolarAudio():
+            xn = SenalDiscreta(senal.obtener_datos().copy(), 0, False)
+            operacion = "Interpolación"
+            factor = int(factorInterpolacionDiezmacion.get())
+            # Se realiza la operación
+            gn = obtenerInterpolacion(xn, factor)
+            # Grafica
+            gn.empatar(xn)
+            obtenerAudioDesdeSenalDiscreta(gn)
+            graficarInterpolacionDiezmacion(xn.obtener_datos(), gn.obtener_datos(), operacion)
+           
         tk.Frame.__init__(self, parent)
         #######Titulo de la Pagina Señal de Audio#######
         label1 = tk.Label(self, text="Señal de Audio", font=("Consolas", 16))
@@ -676,14 +717,14 @@ class Page2(tk.Frame):
         btnESalida.grid(row=3, column=2, padx=0, pady=5)
         
         btnAmpli = tk.Button(self, text="Amplificación/Atenuación", font=(
-            "Consolas", 10), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 10), background="#063970", foreground="white", cursor="hand2", command=amplificarAtenuarAudio)
         btnAmpli.grid(row=5, column=1, padx=10, pady=15)
 
         lblMult = tk.Label(self, text="Multiplicador : ",
                            font=("Consolas", 10))
         lblMult.grid(row=5, column=2, padx=0, pady=5)
 
-        entryMult = tk.Entry(self, font=("Consolas", 12))
+        entryMult = tk.Entry(self, font=("Consolas", 12),textvariable=multiplicador)
         entryMult.grid(row=5, column=3, padx=0, pady=5)
         
         btnReflejoX = tk.Button(self, text="Reflejo X", font=(
@@ -695,29 +736,30 @@ class Page2(tk.Frame):
         btnReflejoY.grid(row=6,column=2,padx=0,pady=5)
         
         btnDespla = tk.Button(self, text="Desplazamiento", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=desplazarAudio)
         btnDespla.grid(row=7, column=1, padx=0, pady=5)
 
         lblDespla = tk.Label(self, text="U a desplazar : ",
                              font=("Consolas", 10))
         lblDespla.grid(row=7, column=2, padx=0, pady=5)
 
-        entryDespla = tk.Entry(self, font=("Consolas", 12))
+        entryDespla = tk.Entry(self, font=("Consolas", 12),
+                               textvariable=udsDesplazamiento)
         entryDespla.grid(row=7, column=3, padx=0, pady=5)
 
         btnDiez = tk.Button(self, text="Diezmación", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=diezmarAudio)
         btnDiez.grid(row=8, column=1, padx=0, pady=5)
 
         btnInterpo = tk.Button(self, text="Interpolación", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2")
+            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=interpolarAudio)
         btnInterpo.grid(row=8, column=2, padx=0, pady=5)
 
         lblFactor = tk.Label(
             self, text="Factor Diez/Inter : ", font=("Consolas", 10))
         lblFactor.grid(row=8, column=3, padx=0, pady=5)
 
-        entryDiezInter = tk.Entry(self, font=("Consolas", 12))
+        entryDiezInter = tk.Entry(self, font=("Consolas", 12),textvariable=factorInterpolacionDiezmacion)
         entryDiezInter.grid(row=8, column=5, padx=0, pady=5)
         
         btnFFT = tk.Button(self, text="FFT", font=(
