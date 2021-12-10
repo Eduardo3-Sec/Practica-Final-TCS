@@ -66,12 +66,12 @@ class StartPage(tk.Frame):
             siendo ésta ya sea una secuencia de valores x(n) & h(n) o una señal de audio desde micrófono de máximo \n
             3 segundos, de acuerdo a un menú principal\n
             Integrantes:\n
-            Mendoza Martínez Eduardo 3CM5  \n
-            Sandoval Hernández Kevin Edwin 3CV5 \n
-            Valle Ortiz Edilberto Sergio 3CV5 \n
-            Hernández Magallón Erick Raziel 3CM5 \n
-            Ayala Segoviano Donaldo Horacio 3CM5 \n
-            Álvarez Garrido Ian Federico 3CM5 \n
+            Balbuena Galván Alan Jair 3CV17  \n
+            Carmona Aguirre Eduardo Samuel 3CV17 \n
+            Enrique Adrian Alvarez Luis 3CV18 \n
+            Nambo Velazquez Carlos 3CV17 \n
+            Salinas Franco Carlos Enrique 3CV17 \n
+           
         """
         tk.Label(self, text=portada,
                  font=("Consolas", 9)).place(x=10, y=170)
@@ -258,7 +258,7 @@ class Page1(tk.Frame):
             plt.ylabel('x(n)')
             plt.subplot(313)
             markerline, stemlines, baseline = plt.stem(puntosEjeH, resultado, '-.')
-            plt.suptitle(operacion+' x(n) con algo')
+            plt.suptitle(operacion+' x(n)')
             plt.setp(baseline)
             plt.ylabel('g(n)')
             pyplot.axhline(0, color="black")
@@ -283,7 +283,7 @@ class Page1(tk.Frame):
             gn = obtenerSuma(xn, hn) # ------------------LINEA A CAMBIAR
             gn.empatar(xn)
             gn.empatar(hn)
-            operacion = "SUMA"           
+            operacion = "Suma"           
             resultadoXn.set(obtenerSecuencia("x", xn))
             resultadoHn.set(obtenerSecuencia("h", hn))
             resultadoGn.set(obtenerSecuencia("g", gn))
