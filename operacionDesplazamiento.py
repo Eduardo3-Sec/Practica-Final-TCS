@@ -71,29 +71,7 @@ def obtener_Desplazamiento(senal, tamanioDesplazamiento):
     desplazamiento = []  # Lista auxiliar donde se guardaran los desplazamientos
     datosAux = []
     return obtener_desplazamiento(senal, tamanioDesplazamiento)
-    if senal.es_periodica():
-        return desplazarPeriodica(senal, tamanioDesplazamiento)
-    tamanioDesplazamiento *= (-1)
-    if(tamanioDesplazamiento > 0):
-        datosAux = senal.obtener_datos()
-        for i in range(0, tamanioDesplazamiento):
-            desplazamiento.append(0)
-        desplazamiento = desplazamiento+datosAux
-        return SenalDiscreta(desplazamiento, senal.obtener_indice_inicio() - tamanioDesplazamiento, senal.es_periodica())
-    elif(tamanioDesplazamiento < 0):
-        tamanioDesplazamiento *= (-1)
-        Aux = senal.obtener_datos()[::-1]
-        for i in range(tamanioDesplazamiento):
-           # desplazamiento.insert(len(desplazamiento), 0)
-           Aux.pop()
-        Aux = Aux[::-1]
-        for i in range(tamanioDesplazamiento):
-            Aux.append(0)
-        return SenalDiscreta(Aux, senal.obtener_indice_inicio() + tamanioDesplazamiento, senal.es_periodica())
-    else:
-        return senal
-
-
+ 
 def desplazarPeriodica(senal, desplazamiento):
     indice_actual = senal.obtener_indice_inicio()
     if desplazamiento < 0:

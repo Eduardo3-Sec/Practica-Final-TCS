@@ -5,6 +5,7 @@ from matplotlib import pyplot
 import numpy as np
 from pydub import AudioSegment
 from pydub.playback import play
+from PIL import ImageTk,Image
 #######Imports de Archivos#######
 from senalDiscreta import *
 from operacionSuma import *
@@ -14,7 +15,6 @@ from operacionReflejo import *
 from operacionDesplazamiento import *
 from operacionInterpolacionDiezmacion import *
 from operacionConvolucion import *
-from operacionFFT import *
 #####Decalracion de varibles Globales#####
 
 class tkinterApp(tk.Tk):
@@ -22,9 +22,9 @@ class tkinterApp(tk.Tk):
         tk.Tk.__init__(self, *args, **kwargs)
 
         self.title("Practica Señales - Equipo")
-        self.minsize(850, 550)
-        self.maxsize(850, 570)
-
+        self.minsize(760, 580)
+        self.maxsize(770, 590)
+        #self.wm_attributes('-alpha', 0.7)
         container = tk.Frame(self)
         container.pack(side="top", fill="both", expand=True)
 
@@ -48,33 +48,52 @@ class tkinterApp(tk.Tk):
 
 
 class StartPage(tk.Frame):
+    def _resize_image(self,event):
+    
+        new_width = event.width
+        new_height = event.height
+
+        self.image = self.img_copy.resize((new_width, new_height))
+
+        self.background_image = ImageTk.PhotoImage(self.image)
+        self.background.configure(image =  self.background_image)
+    
     def __init__(self, parent, controller):
-
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="Menú de Selección", font=("Consolas", 24))
-        label.place(x=300, y=20)
+        
+        self.image = Image.open("./img/background.jpg")
+        self.img_copy = self.image.copy()
 
-        button3 = tk.Button(self, text="Secuencia Valores", cursor="hand2", bd=10, background="#063970",
-                            height=0, font=("Consolas", 19),foreground="white", command=lambda: controller.show_frame(Page1))
-        button3.place(x=480, y=100)
-        button4 = tk.Button(self, text="Señal de audio", cursor="hand2", bd=10, background="#063970",
-                            height=0, font=("Consolas", 19),foreground="white", command=lambda: controller.show_frame(Page2))
-        button4.place(x=190, y=100)
+        self.background_image = ImageTk.PhotoImage(self.image)
+
+        self.background = Label(self, image=self.background_image)
+        self.background.pack(fill=BOTH, expand=YES)
+        self.background.bind('<Configure>', self._resize_image)
+              
+        label = tk.Label(self, text="Menú de Selección", font=("Consolas", 16))
+        label.place(x=300, y=420)
+        
+        button3 = tk.Button(self, text="Secuencia Valores", cursor="hand2", bd=5,background="#063970", 
+                            height=0, font=("Consolas", 10),foreground="white", command=lambda: controller.show_frame(Page1))
+        button3.place(x=480, y=460)
+        button4 = tk.Button(self, text="Señal de audio", cursor="hand2", bd=5,background="#063970",
+                            height=0, font=("Consolas", 10),foreground="white", command=lambda: controller.show_frame(Page2))
+        button4.place(x=190, y=460)
 
         portada = """
-            Programa que permite realizar Operaciones Básicas a una señal de entrada ingresada por el usuario, \n
-            siendo ésta ya sea una secuencia de valores x(n) & h(n) o una señal de audio desde micrófono de máximo \n
-            3 segundos, de acuerdo a un menú principal\n
+            Escuela Superior de Cómputo\n
+            Teoría de Comunicaciones y Señales\n
             Integrantes:\n
             Balbuena Galván Alan Jair 3CV17  \n
             Carmona Aguirre Eduardo Samuel 3CV17 \n
             Enrique Adrian Alvarez Luis 3CV18 \n
             Nambo Velazquez Carlos 3CV17 \n
             Salinas Franco Carlos Enrique 3CV17 \n
-           
-        """
-        tk.Label(self, text=portada,
-                 font=("Consolas", 9)).place(x=10, y=170)
+         """ 
+       
+        lblNames =  tk.Label(self, text=portada,font=("Consolas", 14),width=50)
+        lblNames.place(x=150, y=10)
+        
 
 # Second Window - Frame 2 (Page 1)
 
@@ -486,31 +505,6 @@ class Page1(tk.Frame):
             resultadoGn.set(obtenerSecuencia("g", gn))
             # Grafica
             graficar(puntosEjeH, xn.obtener_datos(), hn.obtener_datos(), gn.obtener_datos(), operacion)
-
-        def fft():
-            senales = concatenarSecuenciaX()
-            xn = senales[0]
-            gn = obtener_FFT(xn) 
-            operacion = "FFT" 
-            xnn = xn.obtener_datos()
-            gnn = gn.obtener_datos()
-            resx = "x(n)={"
-            for e in xnn:
-                if e != "":
-                    resx = resx + str(e) + ","
-                else:
-                    resx = resx + str(e)
-            resx = resx + "}"
-
-            resg = "g(n)={"
-            for e in gnn:
-                if e != "":
-                    resg = resg+str(e)+","
-                else:
-                    resg = resg + str(e)
-            resg = resg+"}"
-            resultadoXn.set(resx)
-            resultadoGn.set(resg)
                     
         tk.Frame.__init__(self, parent)
         #######LABEL DE TITULO SECUENCIA DE VALORES#######
@@ -574,7 +568,7 @@ class Page1(tk.Frame):
         lblMult = tk.Label(self,text="Multiplicador : ",font=("Consolas",10))
         lblMult.grid(row=5,column=2,padx=0,pady=5)
         
-        entryMult = tk.Entry(self, font=("Consolas", 12),textvariable=multiplicador)
+        entryMult = tk.Entry(self, font=("Consolas", 12),textvariable=multiplicador,width=2)
         entryMult.grid(row=5,column=3,padx=0,pady=5)
         
         btnReflejo = tk.Button(self, text="Reflejo en X y Y", font=(
@@ -589,7 +583,7 @@ class Page1(tk.Frame):
         lblDespla.grid(row=7,column=2,padx=0,pady=5)
         
         entryDespla = tk.Entry(self, font=("Consolas", 12),
-                               textvariable=udsDesplazamiento)
+                               textvariable=udsDesplazamiento, width=2)
         entryDespla.grid(row=7, column=3, padx=0, pady=5)
         
         btnDiez = tk.Button(self, text="Diezmación", font=(
@@ -603,16 +597,13 @@ class Page1(tk.Frame):
         lblFactor = tk.Label(self,text="Factor Diez/Inter : ",font=("Consolas",10))
         lblFactor.grid(row=8,column=3,padx=0,pady=5)
         
-        entryDiezInter = tk.Entry(self, font=("Consolas", 12),textvariable=factorInterpolacionDiezmacion)
+        entryDiezInter = tk.Entry(self, font=("Consolas", 12),textvariable=factorInterpolacionDiezmacion,width=2)
         entryDiezInter.grid(row=8, column=5, padx=0, pady=5)
         
         btnConvo = tk.Button(self, text="Convolución", font=(
             "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=convolusionar)
         btnConvo.grid(row=9, column=1, padx=0, pady=5)
         
-        btnFFT = tk.Button(self, text="FFT", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2",command=fft)
-        btnFFT.grid(row=10, column=1, padx=0, pady=5)
         #######Pintar Resultados########
         lblResultadoXn = tk.Label(self,text="Resultado",font=("Consolas",10))
         lblResultadoXn.grid(row=11, column=1, padx=0, pady=5,columnspan=4)
@@ -694,19 +685,12 @@ class Page2(tk.Frame):
             obtenerAudioDesdeSenalDiscreta(gn)
             graficarInterpolacionDiezmacion(xn.obtener_datos(), gn.obtener_datos(), operacion)
         
-        ####### FFT AUDIO #######
-        def fft_audio():
-            T1N = graficarFFT2(obtenerNumpyDesdeAudio().obtener_datos())
-            obtenerAudioDesdeNumpy(T1N)
-            plt.subplot(121)
-            plt.plot(T1N)
-            plt.show()
         ####### Reflejo X #######
         def reflejarEnX():
-            print("Aqui deberia de ir el codigo de Reflejo X pero no funciona bien")
+            print(".")
         ####### Reflejo Y #######
         def reflejarEnY():
-            print("Aqui deberia de ir el codigo de Reflejo Y pero no funciona bien")
+            print(".")
             
         
         tk.Frame.__init__(self, parent)
@@ -739,7 +723,8 @@ class Page2(tk.Frame):
                            font=("Consolas", 10))
         lblMult.grid(row=5, column=2, padx=0, pady=5)
 
-        entryMult = tk.Entry(self, font=("Consolas", 12),textvariable=multiplicador)
+        entryMult = tk.Entry(self, font=("Consolas", 12),
+                             textvariable=multiplicador, width=2)
         entryMult.grid(row=5, column=3, padx=0, pady=5)
         
         btnReflejoX = tk.Button(self, text="Reflejo X", font=(
@@ -759,7 +744,7 @@ class Page2(tk.Frame):
         lblDespla.grid(row=7, column=2, padx=0, pady=5)
 
         entryDespla = tk.Entry(self, font=("Consolas", 12),
-                               textvariable=udsDesplazamiento)
+                               textvariable=udsDesplazamiento, width=2)
         entryDespla.grid(row=7, column=3, padx=0, pady=5)
 
         btnDiez = tk.Button(self, text="Diezmación", font=(
@@ -774,13 +759,10 @@ class Page2(tk.Frame):
             self, text="Factor Diez/Inter : ", font=("Consolas", 10))
         lblFactor.grid(row=8, column=3, padx=0, pady=5)
 
-        entryDiezInter = tk.Entry(self, font=("Consolas", 12),textvariable=factorInterpolacionDiezmacion)
+        entryDiezInter = tk.Entry(self, font=(
+            "Consolas", 12), textvariable=factorInterpolacionDiezmacion, width=2)
         entryDiezInter.grid(row=8, column=5, padx=0, pady=5)
-        
-        btnFFT = tk.Button(self, text="FFT", font=(
-            "Consolas", 12), background="#063970", foreground="white", cursor="hand2", command=fft_audio)
-        btnFFT.grid(row=10, column=1, padx=0, pady=5)
-        
+                
         #######Boton de Regreso a Pagina Principal######
         button1 = tk.Button(self, text="Regresar",background="#063970",foreground="white",cursor="hand2",bd=5,
                             command=lambda: controller.show_frame(StartPage))

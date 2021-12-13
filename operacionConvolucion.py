@@ -35,9 +35,6 @@ def obtener_convolucion_finita(x, h):
     nuevo_indice_inicio = x.obtener_indice_inicio() + h.obtener_indice_inicio()
     return SenalDiscreta(datos_convolucionados, nuevo_indice_inicio, False)
 
-
-# Se obtiene la convolucion periodica con el algoritmo de clase
-# Se reciben dos seniales (SenalDiscreta), una periodica y una finita
 def obtener_convolucion_periodica(x, h):
     # se tomara a h como la finita
     if (x.es_periodica()):
